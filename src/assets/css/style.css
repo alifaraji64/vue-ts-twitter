@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .nav-link{
-    @apply flex justify-start items-center my-6 p-2 border-transparent border-2 rounded-3xl hover:bg-gray-700 hover:text-purple-500 text-white
+    @apply flex justify-start items-center my-6 p-2 border-transparent border-2 rounded-3xl hover:text-blue-500 text-gray-800
 }

@@ -32204,23 +32204,15 @@ video {
   justify-content: flex-start;
   border-radius: 1.5rem;
   border-width: 2px;
-  border-color: transparent
-}
-
-.nav-link:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgba(55, 65, 81, var(--tw-bg-opacity));
-}
-
-.nav-link {
+  border-color: transparent;
   padding: 0.5rem;
   --tw-text-opacity: 1;
-  color: rgba(255, 255, 255, var(--tw-text-opacity));
+  color: rgba(31, 41, 55, var(--tw-text-opacity))
 }
 
 .nav-link:hover {
   --tw-text-opacity: 1;
-  color: rgba(139, 92, 246, var(--tw-text-opacity));
+  color: rgba(59, 130, 246, var(--tw-text-opacity));
 }
 
 @media (min-width: 640px) {

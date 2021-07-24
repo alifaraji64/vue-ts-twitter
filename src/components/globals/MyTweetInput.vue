@@ -6,16 +6,16 @@
             </div>
         </div>
         <div class="ml-4">
-            <textarea cols="60" rows="5" class="bg-transparent text-gray-100 placeholder-gray-400  focus:outline-none" placeholder="What's happening"></textarea>
+            <textarea cols="60" rows="5" class="bg-transparent text-gray-700 placeholder-gray-400  focus:outline-none" placeholder="What's happening"></textarea>
             <div id="buttons" class="flex justify-between items-center border-t-2 border-gray-500 pt-4">
                 <div id="left">
-                    <button class="text-purple-500 mx-2"><i class="fas fa-image"></i></button>
-                    <button class="text-purple-500 mx-2"><i class="fas fa-image"></i></button>
-                    <button class="text-purple-500 mx-2"><i class="fas fa-image"></i></button>
+                    <button class="text-blue-500 mx-2"><i class="fas fa-image"></i></button>
+                    <button class="text-blue-500 mx-2"><i class="fas fa-image"></i></button>
+                    <button class="text-blue-500 mx-2"><i class="fas fa-image"></i></button>
                 </div>
                 <div id="right" class="flex items-center">
                     <div id="length-limiter" class="h-6 w-6 rounded-full border-2 border-gray-500"></div>
-                    <button class="py-1 px-2 ml-3 bg-purple-500 text-white rounded-xl">Tweet</button>
+                    <button class="py-1 px-2 ml-3 bg-blue-500 text-white rounded-xl">Tweet</button>
                 </div>
             </div>
         </div>

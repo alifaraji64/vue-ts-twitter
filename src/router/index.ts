@@ -7,11 +7,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Home',
     component: Home
   },
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   component: () => import('../views/About.vue')
-  // }
+  {
+    path: '/login-register',
+    name: 'LoginRegister',
+    component: () => import('../views/LoginRegister.vue')
+  }
 ]
 
 const router = createRouter({

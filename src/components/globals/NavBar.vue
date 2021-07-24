@@ -1,7 +1,7 @@
 <template>
-  <aside class="max-h-screen bg-gray-800 w-1/4">
+  <aside class="max-h-screen bg-gray-50 w-1/4">
     <div class="ml-12 w-1/2">
-    <i class="fab fa-twitter fa-2x flex justify-start text-white my-8 px-2"></i>
+    <i class="fab fa-twitter fa-2x flex justify-start text-blue-500 my-8 px-2"></i>
         <router-link to="#" class="nav-link">
             <i class="fas fa-home fa-2x"></i>
             <p class="ml-2">Home</p>
