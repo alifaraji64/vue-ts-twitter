@@ -32,19 +32,21 @@
   <transition name="slide">
       <app-child v-if="showLoginModal" id="modal" class="w-64 h-64 bg-white absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2">
         <h1 class="text-xl font-bold">Login</h1>
-        <input type="text" placeholder="email" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
-        <input type="password" placeholder="password" class="p-1 border-2 border-blue-500 rounded-3xl mt-1 mb-10 focus:outline-none">
-        <button class="text-white bg-blue-500 text-lg w-48 rounded-3xl py-2 hover:bg-blue-600">
+        <p class="text-red-500">{{errorMsg}}</p>
+        <input type="text" v-model="loginInfo.email" placeholder="email" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
+        <input type="password" v-model="loginInfo.password" placeholder="password" class="p-1 border-2 border-blue-500 rounded-3xl mt-1 mb-10 focus:outline-none">
+        <button @click="login" class="text-white bg-blue-500 text-lg w-48 rounded-3xl py-2 hover:bg-blue-600">
                     Login
         </button>
       </app-child>
   </transition>
   <transition name="slide">
-      <app-child v-if="showRegisterModal" id="modal" class="w-64 h-64 bg-white absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2">
+      <app-child v-if="showRegisterModal" id="modal" class="w-64 h-72 bg-white absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2">
         <h1 class="text-xl font-bold">Register</h1>
-        <input type="text" placeholder="email" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
-        <input type="text" placeholder="username" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
-        <input type="password" placeholder="password" class="p-1 border-2 border-blue-500 rounded-3xl mt-1 mb-10 focus:outline-none">
+        <p class="text-red-500">{{errorMsg}}</p>
+        <input type="text" v-model="registerInfo.email" placeholder="email" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
+        <input type="text" v-model="registerInfo.username" placeholder="username" class="p-1 border-2 border-blue-500 rounded-3xl mb-1 focus:outline-none">
+        <input type="password" v-model="registerInfo.password" placeholder="password" class="p-1 border-2 border-blue-500 rounded-3xl mt-1 mb-10 focus:outline-none">
         <button class="text-white bg-blue-500 text-lg w-48 rounded-3xl py-2 hover:bg-blue-600" @click="register">
                     register
         </button>
@@ -58,16 +60,64 @@ export default defineComponent ({
 
     data(){
         return{
-            showModal:false,
-            showLoginModal:false,
-            showRegisterModal:false
+            showModal:false as boolean,
+            showLoginModal:false as boolean,
+            showRegisterModal:false as boolean,
+            registerInfo:{
+              username:'' as string,
+              email:'' as string,
+              password:'' as string,
+            },
+            loginInfo:{
+              email:'' as string,
+              password:'' as string
+            },
+            errorMsg:'' as string
         }
     },
     methods:{
       async register(){
         //console.log(store);
-        console.log(this.$store.state);
+        this.errorMsg = '';
+        if(!this.registerInfo.username || !this.registerInfo.email || !this.registerInfo.password){
+          this.errorMsg = 'please fill all of the fields'
+          return;
+        }
+          let result = await fetch(this.$store.state.base_url+'register',{
+            method:"POST",
+            body:JSON.stringify({username:this.registerInfo.username, email:this.registerInfo.email, password:this.registerInfo.password}),
+            headers: {"Content-Type": "application/json"}
+          });
+          let res = await result.json();
+          //handle error
+          res['errorMsg'] ? this.errorMsg = res.errorMsg:null;
+          //handle success
+          if(res['token']){
+            localStorage.setItem('jwt',res['token'])
+            this.$router.push('/');
+          }
 
+
+      },
+      async login(){
+        this.errorMsg = '';
+        if(!this.loginInfo.email || !this.loginInfo.password){
+          this.errorMsg = 'please fill all of the fields'
+          return;
+        }
+        let result = await fetch(this.$store.state.base_url+'login',{
+            method:"POST",
+            body:JSON.stringify({email:this.loginInfo.email, password:this.loginInfo.password}),
+            headers: {"Content-Type": "application/json"}
+          });
+          let res = await result.json();
+          //handle error
+          res['errorMsg'] ? this.errorMsg = res.errorMsg:null;
+          //handle success
+          if(res['token']){
+            localStorage.setItem('jwt',res['token'])
+            this.$router.push('/');
+          }
       }
     }
 })
