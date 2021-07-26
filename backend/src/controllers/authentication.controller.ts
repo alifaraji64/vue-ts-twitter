@@ -14,7 +14,7 @@ class AuthenticationController{
         try {
             await newUser.save();
             let token:string = jwt.sign({ email },process.env.JWT_SECRET_KEY as string,{expiresIn:'1h'})
-            res.send({token})
+            res.send({token,username:newUser.username,uid:newUser._id})
             return;
         } catch (error) {
             res.send({errorMsg:giveError(error)});
@@ -31,7 +31,7 @@ class AuthenticationController{
             return;
         }
         let token:string = jwt.sign({ email },process.env.JWT_SECRET_KEY as string,{expiresIn:'1h'})
-        res.send({token})
+        res.send({token,username:result.username,uid:result._id})
 
     }
     static async logout(req:Request,res:Response){

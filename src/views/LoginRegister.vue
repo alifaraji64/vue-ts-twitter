@@ -94,6 +94,8 @@ export default defineComponent ({
           //handle success
           if(res['token']){
             localStorage.setItem('jwt',res['token'])
+            localStorage.setItem('username',res['username'])
+            localStorage.setItem('uid',res['uid'])
             this.$router.push('/');
           }
 
@@ -116,6 +118,8 @@ export default defineComponent ({
           //handle success
           if(res['token']){
             localStorage.setItem('jwt',res['token'])
+            localStorage.setItem('username',res['username'])
+            localStorage.setItem('uid',res['uid'])
             this.$router.push('/');
           }
       }

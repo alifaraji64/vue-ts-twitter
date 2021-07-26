@@ -2,6 +2,5 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import  store from './store'
-import axios from 'axios'
-//App.config.globalProperties.$axios = axios;
+//App.config.globalProperties.$swal = swal;
 createApp(App).use(store).use(router).mount('#app')
