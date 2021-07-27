@@ -5,7 +5,7 @@
         <i class="fas fa-bahai text-purple-500"></i>
     </header>
     <MyTweetInput/>
-    <SingleTweet v-for="(tweet,i) in tweetsFull" :key="i" :tweet='tweet' :index='i' @updateLike='updateLike'/>
+    <SingleTweet v-for="(tweet,i) in tweetsFull" :key="i" :tweet='tweet' :index='i' :indexInWord='convertToWord(i)' @updateLike='updateLike'/>
 
   </div>
 </template>
@@ -14,6 +14,7 @@
 import MyTweetInput from '@/components/globals/MyTweetInput.vue'
 import SingleTweet from '@/components/globals/SingleTweet.vue'
 import {TweetFull} from '@/types/Tweet'
+import converter from 'number-to-words'
 export default {
     data(){
       return{
@@ -25,9 +26,26 @@ export default {
     },
     components:{MyTweetInput,SingleTweet},
     methods:{
-      updateLike(index){
-        this.tweetsFull[index].likesQty++;
+      updateLike(index,type){
+        if(type=='add'){
+          this.tweetsFull[index].likesQty++;
+          //for color of heart
+          this.tweetsFull[index].likes.push(localStorage.getItem('uid'));
+        }
+        if(type=='remove'){
+          this.tweetsFull[index].likesQty--;
+          //for color of heart
+          this.tweetsFull[index].likes = this.tweetsFull[index].likes.filter(
+            item => item !== localStorage.getItem('uid')
+          )
+        }
+      },
+      convertToWord(index:number){
+        return converter.toWords(index);
       }
+    },
+    computed:{
+
     },
     async mounted(){
         let result = await fetch(this.$store.state.base_url+'get-tweets',{
@@ -45,6 +63,11 @@ export default {
         this.tweets.forEach((rawTweet)=>{
           let correlatedLikeObj = res.find(like =>like.tweetId == rawTweet._id);
           let mergedObj = Object.assign(rawTweet, correlatedLikeObj);
+          console.log('1');
+          console.log(rawTweet);
+          console.log('2');
+          console.log(correlatedLikeObj);
+
           const {username,date,likedUsers,test,uid,_id,text} = mergedObj;
           let finalObj:TweetFull = {username,date,likesQty:likedUsers.length,text,uid,_id,comments:[],commentsQty:19,likes:likedUsers}
           this.tweetsFull.push(finalObj);

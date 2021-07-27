@@ -37,8 +37,17 @@ class TweetController{
     static async addLike(req:Request, res:Response){
         const {tweetId,myId} = req.body;
         try {
-            await Like.findOneAndUpdate({ tweetId }, { $addToSet: { likedUsers: myId } });
-            res.send({code:200})
+
+            let likes_v1  = await Like.findOneAndUpdate({ tweetId }, { $addToSet: { likedUsers: myId } });
+            let likes_v2 = await Like.findOne({tweetId});
+            //if the likesUsers is the same in both queries this means that the user is already liked the post so we can unlike it
+            //nothing in db changed(already liked)
+            if(likes_v1.likedUsers.length==likes_v2.likedUsers.length){
+                await Like.findOneAndUpdate({ tweetId }, { $pull: { likedUsers:myId } })
+                res.json({code:200,msg:'tweet_unliked'});
+                return;
+            }
+            res.json({code:200,msg:'tweet_liked'})
         } catch (error) {
             console.log(error);
 

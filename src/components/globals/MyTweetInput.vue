@@ -45,6 +45,7 @@ export default {
           let res = await result.json();
           if(res.code==200){
               swal("Good job!", "your tweet saved successfully", "success");
+              this.tweetText='';
           }
           else{
               swal({
