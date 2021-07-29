@@ -2,5 +2,5 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import  store from './store'
-//App.config.globalProperties.$swal = swal;
-createApp(App).use(store).use(router).mount('#app')
+//import VModal from 'vue-js-modal'
+createApp(App).use(store).use(router).mount('#app');

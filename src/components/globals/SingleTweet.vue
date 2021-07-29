@@ -5,6 +5,7 @@
             <img src="https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png" alt="lovely avatar" class="object-cover object-center w-full h-full visible group-hover:hidden"/>
             </div>
         </div>
+        <CommentModal v-show="showModal" id="comment_modal" :tweetId='tweet._id' :comments="comments" @newCommentRecieved='newCommentRecieved'/>
         <div class="w-5/6">
             <div class="flex text-sm">
                 <h2 class="text-gray-500 mx-1">{{tweet.username}}</h2>
@@ -15,8 +16,8 @@
                 <p  class="text-sm text-gray-700 my-2 text-left">{{tweet.text}}</p>
             </div>
             <div id="buttons" class="flex text-gray-700">
-                <div class="flex mr-5" >
-                    <i class="far fa-comment"></i>
+                <div class="flex mr-5 cursor-pointer" @click="getComments(tweet._id)">
+                    <i class="far fa-comment text-green-600"></i>
                     <p class="text-xs mx-1">{{tweet.commentsQty}}</p>
                 </div>
                 <div class="flex mx-5 cursor-pointer" @click="likeTweet(tweet._id)" :class="indexInWord">
@@ -35,7 +36,10 @@
 import { defineComponent, PropType } from 'vue';
 import { TweetFull } from '@/types/Tweet';
 import timeago from 'time-ago';
+import swal from 'sweetalert';
+import CommentModal from '@/components/globals/CommentModal.vue';
 export default {
+    components:{CommentModal},
     props:{
         tweet:{
             type:Object as PropType<TweetFull>,
@@ -53,7 +57,10 @@ export default {
     data(){
         return{
             uid:localStorage.getItem('uid'),
-            show:true
+            show:true,
+            showModal:false,
+            comments:[] as Comment[]
+
         }
     },
     methods:{
@@ -84,8 +91,33 @@ export default {
                     document.querySelector('.'+this.indexInWord).classList.remove('animate__heartBeat');
                 },2500)
         },
-        updatedDate(date){
+        updatedDate(date:string){
             return timeago.ago(date);
+        },
+        async getComments(tweetId:string){
+            console.log(this.comments.length);
+
+             var modalContent:any = document.getElementById('comment_modal');
+             modalContent.style.display='block';
+             this.showModal = true;
+            // reducing the amount of requests. if the comments array is empty we are going to make request
+            if(this.comments.length == 0){
+                let result = await fetch(this.$store.state.base_url+'get-comments',{
+                method:"POST",
+                body:JSON.stringify({
+                    tweetId:this.tweet._id,
+                }),
+                headers: {"Content-Type": "application/json"}
+            });
+            let res = await result.json();
+            this.comments = res.comments;
+                }
+            swal({
+                    content: modalContent,
+                })
+        },
+        newCommentRecieved(newComment:Comment){
+            this.comments.push(newComment);
         }
     },
     mounted(){

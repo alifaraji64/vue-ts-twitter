@@ -21,7 +21,7 @@ export default {
         //tweets+like+comment = tweetsfull
         tweetsFull:[],
         tweets:[],
-        Comments:[]
+        // Comments:[]
       }
     },
     components:{MyTweetInput,SingleTweet},
@@ -63,11 +63,6 @@ export default {
         this.tweets.forEach((rawTweet)=>{
           let correlatedLikeObj = res.find(like =>like.tweetId == rawTweet._id);
           let mergedObj = Object.assign(rawTweet, correlatedLikeObj);
-          console.log('1');
-          console.log(rawTweet);
-          console.log('2');
-          console.log(correlatedLikeObj);
-
           const {username,date,likedUsers,test,uid,_id,text} = mergedObj;
           let finalObj:TweetFull = {username,date,likesQty:likedUsers.length,text,uid,_id,comments:[],commentsQty:19,likes:likedUsers}
           this.tweetsFull.push(finalObj);

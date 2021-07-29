@@ -9,5 +9,7 @@ router.post('/create-tweet',TweetController.createTweet);
 router.get('/get-tweets',TweetController.getTweets);
 router.get('/get-likes',TweetController.getLikes);
 router.post('/add-like',TweetController.addLike);
+router.post('/add-comment',TweetController.addComment);
+router.post('/get-comments',TweetController.getComments);
 
 export{router}

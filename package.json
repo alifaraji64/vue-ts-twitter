@@ -10,6 +10,7 @@
     "build-css": "postcss ./src/assets/css/style.css -o ./src/assets/css/compiled.css -w"
   },
   "dependencies": {
+    "@kouts/vue-modal": "^2.0.10",
     "axios": "^0.21.1",
     "javascript-time-ago": "^2.3.8",
     "number-to-words": "^1.2.4",

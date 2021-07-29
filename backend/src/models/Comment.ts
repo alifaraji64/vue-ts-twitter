@@ -5,7 +5,8 @@ const Schema = new mongoose.Schema({
         type:String,
     },
 	comment:{
-        type:String
+        type:String,
+        required:true,
     },
     username:{type:String,required:true},
     profileImage:{type:String},

@@ -4,6 +4,7 @@ import Tweet from '../models/Tweet';
 import Comment from '../models/Comment';
 
 class TweetController{
+
     static async createTweet(req:Request, res:Response){
         const {username,uid,text} = req.body;
         let newTweet = new Tweet({username,uid,text});
@@ -53,6 +54,26 @@ class TweetController{
 
         }
 
+    }
+
+    static async addComment(req:Request, res:Response){
+        const {tweetId, comment, username} = req.body;
+        let newComment = new Comment({username,comment,tweetId});
+        try {
+            let savedComment = await newComment.save();
+            console.log('comment saved to db');
+            res.send({savedComment});
+            return;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getComments(req:Request, res:Response){
+        const {tweetId} = req.body;
+        console.log(tweetId);
+        const comments = await Comment.find({tweetId});
+        res.send({comments});
     }
 }
 

@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="ml-4">
-            <textarea v-model="tweetText" cols="60" rows="5" class="bg-transparent text-gray-700 placeholder-gray-400  focus:outline-none" placeholder="What's happening"></textarea>
+            <textarea v-model="tweetText" cols="50" rows="5" class="bg-transparent text-gray-700 placeholder-gray-400  focus:outline-none" placeholder="What's happening"></textarea>
             <div id="buttons" class="flex justify-between items-center border-t-2 border-gray-500 pt-4">
                 <div id="left">
                     <button class="text-blue-500 mx-2"><i class="fas fa-image"></i></button>
@@ -24,7 +24,6 @@
 
 <script lang='ts'>
 import swal from 'sweetalert';
-
 export default {
     data(){
         return{
