@@ -2,6 +2,7 @@ import{Request,Response} from 'express'
 import Like from '../models/Like';
 import Tweet from '../models/Tweet';
 import Comment from '../models/Comment';
+import SavedTweet from '../models/SavedTweet';
 
 class TweetController{
 
@@ -9,14 +10,17 @@ class TweetController{
         const {username,uid,text} = req.body;
         let newTweet = new Tweet({username,uid,text});
         let newLike = new Like({tweetId:newTweet._id,likedUsers:[]})
+        let newSavedTweet = new SavedTweet({uid,SavedTweets:[]})
+        console.log(newSavedTweet);
+
         try {
             //saving to 'tweets' collection
             await newTweet.save();
             res.send({code:200});
             //saving to 'likes' collection
             await newLike.save();
-            //saving to 'comments' collection
-            //await
+            //save to 'savedTweet' collection
+            await newSavedTweet.save();
 
         } catch (error) {
             res.send({code:400})
@@ -74,6 +78,19 @@ class TweetController{
         console.log(tweetId);
         const comments = await Comment.find({tweetId});
         res.send({comments});
+    }
+
+    static async saveTweet(req:Request, res:Response){
+        console.log('hello from save tweet');
+        const {uid,tweetId} = req.body;
+        await SavedTweet.findOneAndUpdate({ uid }, { $addToSet: { savedTweets: tweetId } });
+        res.json({code:200,msg:'tweet saved'})
+    }
+
+    static async getSavedTweets(req:Request, res:Response){
+        const {uid} = req.body;
+        const savedTweets = await SavedTweet.findOne({uid});
+        res.json(savedTweets)
     }
 }
 

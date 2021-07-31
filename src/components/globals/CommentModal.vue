@@ -1,17 +1,18 @@
 <template>
-  <div>
-            <section class="p-1">
+<div id="overlay" class="w-screen min-h-screen bg-gray-300 opacity-50 absolute top-0 left-0 z-10"></div>
+  <div id="comment_modal" class="z-20">
+          <section class="p-1">
                 <div class="mb-4">
                     <input type="text" placeholder="your comment..." class="border-2 border-gray-400 p-1" v-model="comment">
                     <button class="p-1 rounded-md bg-blue-500 text-white ml-2" @click="addComment(tweetId)">Comment</button>
                 </div>
                 <div id="comment" class="flex items-center justify-start border-2 border-gray-400 my-1" v-for="(comment,i) in comments" :key="i">
-                    <div class="w-10 relative rounded-full" id="avatar">
+                    <div class="w-1/12 h-1/3 relative rounded-full" id="avatar">
                         <div class="group w-full h-full rounded-full overflow-hidden shadow-inner text-center bg-purple table cursor-pointer">
                             <img src="https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png" alt="lovely avatar" class="object-cover object-center w-full h-full visible group-hover:hidden"/>
                         </div>
                 </div>
-                <p class="ml-4">{{comment.comment}}</p>
+                <p class="ml-0 w-11/12">{{comment.comment}}</p>
             </div>
             </section>
         </div>
@@ -37,6 +38,7 @@ export default {
             required:true
         }
     },
+    emits: ['newCommentRecieved','close-modal'],
     methods:{
        async addComment(tweetId:string){
            if(this.comment == ''){
@@ -65,9 +67,22 @@ export default {
             //this.comments.push(newComment);
         }
     },
+    mounted(){
+        let overlay = document.getElementById('overlay');
+        overlay.addEventListener('click',()=>this.$emit('close-modal'))
+    }
 }
 </script>
 
 <style>
-
+#comment_modal{
+    position: absolute;
+    max-width:330px;
+    min-height: 300px;
+    word-wrap: break-word;
+    background: white;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+}
 </style>

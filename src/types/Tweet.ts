@@ -6,6 +6,6 @@ export interface TweetFull{
     _id:string,
     likesQty:number,
     likes:[],
-    commentsQty:number,
+    commentsQty:string,
     comments:[]
 }

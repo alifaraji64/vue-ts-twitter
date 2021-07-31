@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gray-50 w-1/2 border-2 border-gray-500 ">
+  <div class="min-h-screen bg-gray-50 w-1/2 border-2 border-gray-500">
     <header class="flex justify-between items-center border-b-2 border-gray-500 px-4 py-2">
         <h2 class=" text-xl font-semibold text-gray-800">Home</h2>
         <i class="fas fa-bahai text-purple-500"></i>
     </header>
     <MyTweetInput/>
-    <SingleTweet v-for="(tweet,i) in tweetsFull" :key="i" :tweet='tweet' :index='i' :indexInWord='convertToWord(i)' @updateLike='updateLike'/>
+    <SingleTweet v-for="(tweet,i) in tweetsFull" :key="i" :savedTweets='savedTweets' :tweet='tweet' :index='i' :indexInWord='convertToWord(i)' @updateLike='updateLike'/>
 
   </div>
 </template>
@@ -21,6 +21,7 @@ export default {
         //tweets+like+comment = tweetsfull
         tweetsFull:[],
         tweets:[],
+        savedTweets:[]
         // Comments:[]
       }
     },
@@ -64,9 +65,19 @@ export default {
           let correlatedLikeObj = res.find(like =>like.tweetId == rawTweet._id);
           let mergedObj = Object.assign(rawTweet, correlatedLikeObj);
           const {username,date,likedUsers,test,uid,_id,text} = mergedObj;
-          let finalObj:TweetFull = {username,date,likesQty:likedUsers.length,text,uid,_id,comments:[],commentsQty:19,likes:likedUsers}
+          let finalObj:TweetFull = {username,date,likesQty:likedUsers.length,text,uid,_id,comments:[],commentsQty:'see comments',likes:likedUsers}
           this.tweetsFull.push(finalObj);
         })
+
+        result = await fetch(this.$store.state.base_url+'get-saved-tweets',{
+            method:"POST",
+            body:JSON.stringify({uid:localStorage.getItem('uid')}),
+            headers: {"Content-Type": "application/json"}
+          });
+        res = await result.json();
+        this.savedTweets = res.savedTweets;
+        console.log(this.savedTweets);
+
         //console.log(this.tweetsFull);
     }
 }

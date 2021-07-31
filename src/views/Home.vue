@@ -1,5 +1,5 @@
 <template>
-  <main class="flex justify-evenly bg-red-400">
+  <main class="flex justify-evenly bg-red-400 relative">
     <NavBar/>
     <Middle/>
     <Suggestions/>
