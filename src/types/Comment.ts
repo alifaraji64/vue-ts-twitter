@@ -1,4 +1,5 @@
 export interface Comment{
+    uid:string
     date: string,
     comment: string,
     tweetId: string,

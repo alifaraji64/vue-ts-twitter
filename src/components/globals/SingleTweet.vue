@@ -1,11 +1,11 @@
 <template>
   <section class="py-2 px-4 flex border-b-2 border-gray-500 items-center">
-        <div class="w-10 h-10 mb-4 rounded-full" id="avatar">
+        <div class="w-10 h-10 mb-4 rounded-full" id="avatar" @click="goToProfile(tweet.uid,tweet.username)">
             <div class="group w-full h-full rounded-full overflow-hidden shadow-inner text-center bg-purple table cursor-pointer">
             <img src="https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png" alt="lovely avatar" class="object-cover object-center w-full h-full visible group-hover:hidden"/>
             </div>
         </div>
-        <CommentModal v-if="showModal" :tweetId='tweet._id' :comments="comments" @newCommentRecieved='newCommentRecieved' @close-modal='closeModal'/>
+        <CommentModal v-if="showModal" :tweetId='tweet._id' :comments="comments" @newCommentRecieved='newCommentRecieved' @close-modal='closeModal' :uid='tweet.uid'/>
         <div class="w-5/6">
             <div class="flex text-sm">
                 <h2 class="text-gray-500 mx-1">{{tweet.username}}</h2>
@@ -16,7 +16,7 @@
                 <p  class="text-sm text-gray-700 my-2 text-left">{{tweet.text}}</p>
             </div>
             <div id="buttons" class="flex text-gray-700">
-                <div class="flex mr-5 cursor-pointer" @click="getComments(tweet._id)">
+                <div class="flex mr-5 cursor-pointer" @click="getComments(tweet._id,tweet.uid)">
                     <i class="far fa-comment text-green-600"></i>
                     <p class="text-xs mx-1">{{tweet.commentsQty}}</p>
                 </div>
@@ -25,7 +25,7 @@
                     <p class="text-xs mx-1">{{tweet.likesQty}}</p>
                 </div>
                 <div  class="flex ml-5 cursor-pointer " @click="saveTweet(tweet._id)" :class="indexInWord+'bookmark'" >
-                    <i class="fa-bookmark" :class=" isTweetSaved(tweet._id) ? 'fas':'far' "></i>
+                    <i class="fa-bookmark" :class=" isTweetSaved ? 'fas':'far' "></i>
                 </div>
             </div>
         </div>
@@ -35,6 +35,7 @@
 <script lang='ts'>
 import { defineComponent, PropType } from 'vue';
 import { TweetFull } from '@/types/Tweet';
+import { Comment } from '@/types/Comment';
 import timeago from 'time-ago';
 import CommentModal from '@/components/globals/CommentModal.vue';
 export default {
@@ -54,7 +55,7 @@ export default {
         },
         savedTweets:{
             type:Array,
-            required:true
+            //required:true
         }
     },
     emits:['updateLike'],
@@ -63,7 +64,7 @@ export default {
             uid:localStorage.getItem('uid'),
             show:true,
             showModal:false,
-            comments:[] as Comment[],
+            comments:[] as Comment[]
         }
     },
     methods:{
@@ -97,6 +98,7 @@ export default {
         animateBookmark(){
             document.querySelector('.'+this.indexInWord+'bookmark').classList.add('animate__animated');
                 document.querySelector('.'+this.indexInWord+'bookmark').classList.add('animate__heartBeat');
+                document.querySelector('.'+this.indexInWord+'bookmark'+' i').classList.add('fas');
                 setTimeout(()=>{
                     document.querySelector('.'+this.indexInWord+'bookmark').classList.remove('animate__animated');
                     document.querySelector('.'+this.indexInWord+'bookmark').classList.remove('animate__heartBeat');
@@ -105,7 +107,7 @@ export default {
         updatedDate(date:string){
             return timeago.ago(date);
         },
-        async getComments(tweetId:string){
+        async getComments(tweetId:string,tweetUid:string){
             console.log(this.comments.length);
 
              var modalContent:any = document.getElementById('comment_modal');
@@ -121,7 +123,12 @@ export default {
             });
             this.showModal = true;
             let res = await result.json();
+            res.comments.forEach(comment => {
+                comment['uid'] = tweetUid;
+            });
             this.comments = res.comments;
+            console.log(this.comments);
+
             }
             this.showModal = true;
         },
@@ -138,16 +145,36 @@ export default {
             headers: {"Content-Type": "application/json"}
           });
             let res = await result.json();
+            console.log(res);
             if(res.msg == 'tweet saved'){
                 this.animateBookmark();
             }
+            if(res.msg == 'tweet unsaved'){
+                this.animateBookmark();
+                document.querySelector('.'+this.indexInWord+'bookmark'+' i').classList.remove('fas');
+            }
 
         },
-        isTweetSaved(tweetId){
-            return this.savedTweets.find(id=> id==tweetId)?true:false;
+        goToProfile(uid,username){
+            //clicked uid the same with url param
+            if(uid != this.$route.params.uid){
+                //don't change the page
+                this.$store.commit('SET_USERNAME',username);
+                this.$router.push('/'+uid);
+            }
+            if(uid == localStorage.getItem('uid')){
+                this.$store.commit('SET_USERNAME','Home');
+                this.$router.push('/'+uid);
+                return;
+            }
+            this.$store.commit('SET_USERNAME',username);
         }
     },
-
+    computed:{
+        isTweetSaved(){
+            return this.savedTweets.find(id=> id==this.tweet._id)?true:false;
+        }
+    },
     mounted(){
         console.log('vooooooooo');
     }

@@ -10,8 +10,6 @@ class TweetController{
         const {username,uid,text} = req.body;
         let newTweet = new Tweet({username,uid,text});
         let newLike = new Like({tweetId:newTweet._id,likedUsers:[]})
-        let newSavedTweet = new SavedTweet({uid,SavedTweets:[]})
-        console.log(newSavedTweet);
 
         try {
             //saving to 'tweets' collection
@@ -19,8 +17,6 @@ class TweetController{
             res.send({code:200});
             //saving to 'likes' collection
             await newLike.save();
-            //save to 'savedTweet' collection
-            await newSavedTweet.save();
 
         } catch (error) {
             res.send({code:400})
@@ -30,7 +26,14 @@ class TweetController{
     }
 
     static async getTweets(req:Request, res:Response){
-        let tweets = await Tweet.find({});
+        const uid = req.params.uid;
+        let tweets;
+        if(uid) {
+            tweets = await Tweet.find({uid});
+            res.send(tweets);
+            return;
+        }
+        tweets = await Tweet.find({});
         res.send(tweets);
     }
 
@@ -83,8 +86,24 @@ class TweetController{
     static async saveTweet(req:Request, res:Response){
         console.log('hello from save tweet');
         const {uid,tweetId} = req.body;
+        let collection = await SavedTweet.findOne({uid});
+        if(collection){
+            let v_1 = await SavedTweet.findOneAndUpdate({ uid }, { $addToSet: { savedTweets: tweetId } });
+            let v_2 = await SavedTweet.findOne({uid});
+            //if the length of before and after change is the same it means nothing has changed so the tweetId was already in DB
+            if(v_1.savedTweets.length == v_2.savedTweets.length){
+                await SavedTweet.findOneAndUpdate({ uid }, { $pull: { savedTweets:tweetId } })
+                res.json({code:200,msg:'tweet unsaved'});
+                return;
+            }
+            res.json({code:200,msg:'tweet saved'})
+            return;
+        }
+        let newSavedTweet = new SavedTweet({uid,SavedTweets:[]});
+        await newSavedTweet.save();
         await SavedTweet.findOneAndUpdate({ uid }, { $addToSet: { savedTweets: tweetId } });
-        res.json({code:200,msg:'tweet saved'})
+        res.json({code:200,msg:'tweet saved'});
+        return;
     }
 
     static async getSavedTweets(req:Request, res:Response){

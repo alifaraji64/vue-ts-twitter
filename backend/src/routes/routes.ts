@@ -7,7 +7,7 @@ router.post('/register',AuthenticationController.register);
 router.post('/login',AuthenticationController.login);
 
 router.post('/create-tweet',TweetController.createTweet);
-router.get('/get-tweets',TweetController.getTweets);
+router.get('/get-tweets/:uid?',TweetController.getTweets);
 router.get('/get-likes',TweetController.getLikes);
 router.post('/add-like',TweetController.addLike);
 router.post('/add-comment',TweetController.addComment);

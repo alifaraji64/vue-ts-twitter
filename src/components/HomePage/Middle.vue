@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-50 w-1/2 border-2 border-gray-500">
     <header class="flex justify-between items-center border-b-2 border-gray-500 px-4 py-2">
-        <h2 class=" text-xl font-semibold text-gray-800">Home</h2>
+        <h2 class=" text-xl font-semibold text-gray-800">{{username}}</h2>
         <i class="fas fa-bahai text-purple-500"></i>
     </header>
-    <MyTweetInput/>
+    <MyTweetInput v-if="!uid"/>
     <SingleTweet v-for="(tweet,i) in tweetsFull" :key="i" :savedTweets='savedTweets' :tweet='tweet' :index='i' :indexInWord='convertToWord(i)' @updateLike='updateLike'/>
 
   </div>
@@ -21,7 +21,8 @@ export default {
         //tweets+like+comment = tweetsfull
         tweetsFull:[],
         tweets:[],
-        savedTweets:[]
+        savedTweets:[],
+        uid:'',
         // Comments:[]
       }
     },
@@ -43,13 +44,9 @@ export default {
       },
       convertToWord(index:number){
         return converter.toWords(index);
-      }
-    },
-    computed:{
-
-    },
-    async mounted(){
-        let result = await fetch(this.$store.state.base_url+'get-tweets',{
+      },
+      async fetchInfo(){
+        let result = await fetch(this.$store.state.base_url+'get-tweets'+(this.uid?`/${this.uid}`:''),{
             method:"GET",
             headers: {"Content-Type": "application/json"}
           });
@@ -75,11 +72,32 @@ export default {
             headers: {"Content-Type": "application/json"}
           });
         res = await result.json();
-        this.savedTweets = res.savedTweets;
-        console.log(this.savedTweets);
+        res?(this.savedTweets = res.savedTweets):(this.savedTweets=[])
+      }
+    },
+    computed:{
+      username(){
+        return this.$store.state.usernameForTitle || 'Home';
+      }
+    },
 
-        //console.log(this.tweetsFull);
-    }
+    async mounted(){
+      this.uid = this.$route.params.uid;
+      this.fetchInfo();
+    },
+    watch: {
+    "$route.params": {
+      handler(newValue) {
+        console.log('param changed');
+        this.tweetsFull = [];
+        this.tweets = [];
+        this.savedTweets = [];
+        this.uid = this.$route.params.uid;
+        this.fetchInfo();
+      },
+     // immediate: true,
+    },
+  },
 }
 </script>
 
